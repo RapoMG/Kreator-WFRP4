@@ -8,7 +8,7 @@ import inspect
 import profesje as pr
 
 
-class Empty:  # temp
+class Empty:  # tem
     nazwa = nazwa_poz = ['', '']
 
 
@@ -30,7 +30,6 @@ def gdzie():
 p_dodat = 0  # punkty na PP i PB
 tab_gl = True  # dla tabeli umiejętności
 rasy = ('Człowiek', 'Krasnolud', 'Niziołek', 'Wysoki elf', 'Leśny elf')
-
 # klasy
 # uczeni = ('Aptekarka', "Czarodziej", 'Inżynier', 'Kapłan', 'Medyczka', 'Mniszka', 'Prawniczka', 'Uczony')
 uczeni = (pr.Aptekarka, pr.Czarodziej, pr.Inzynier, pr.Kaplan, pr.Medyczka, pr.Mniszka, pr.Prawniczka, pr.Uczony)
@@ -58,7 +57,7 @@ mod_r_elf = (30, 30, 20, 20, 40, 30, 30, 30, 30, 20)
 
 
 class Postac:
-    plec = ''
+    plec = 2
     rasa = ''
     prof = None
     klasa_post = ''  # Dodanie wartości
@@ -224,6 +223,16 @@ class Postac:
     zegl = ['Żeglarstwo', 'Zw', 0]
 
     @property
+    def ple(self):
+        if self.plec == 0:
+            rodzaj = "Mężczyzna"
+        elif self.plec == 1:
+            rodzaj = "Kobieta"
+        else:
+            rodzaj = ''
+        return rodzaj
+
+    @property
     def zyw(self):
         if self.rasa == rasy[2]:
             bs = 0
@@ -244,7 +253,7 @@ class Postac:
         zr = self.cechy_pocz[6] + self.cechy_rozw[6]
         inte = self.cechy_pocz[7] + self.cechy_rozw[7]
         sw = self.cechy_pocz[8] + self.cechy_rozw[8]
-        ogd = self.cechy_pocz[5] + self.cechy_rozw[9]
+        ogd = self.cechy_pocz[9] + self.cechy_rozw[9]
         return ww, us, s, wt, ini, zw, zr, inte, sw, ogd
 
     def umiej(self, um):  # Końcowe wartości umiejętności
@@ -275,8 +284,8 @@ class Postac:
 
     @property
     def nazwy(self):
-        """ Nazwy wywodzące się z klasy postaci. -> nazwy[nazwa_profesji, nazwa_poziomu_postaci]"""
-        if self.plec is True:  # True to facet
+        '''Nazwy wywodzące się z klasy postaci. -> nazwy[nazwa_profesji, nazwa_poziomu_postaci]'''
+        if self.plec == 0:  # True to facet
             f = 0  # zmienna do pozycji listy nazwy
         else:
             f = 1  # zmienna do pozycji listy nazwy
@@ -342,12 +351,12 @@ def grupa_prof():  # pozwala na ręczy wybór profesji
             if licz > len(lista):  # jeśli nie ma więcej elementów w liście
                 tresc += '\n '
                 break
-            tresc += f' {licz:02d}. {lista[licz - 1]:18}'
+            tresc += f' {licz:02d}. {lista[licz - 1].nazwa[p.plec]:18}'
             if (licz % 4) == 0:  # stała określająca liczbę profesji w rzędzie pakietu
                 tresc += '\n '
             licz += 1
         if (licz % 8) == 0 and licz <= len(lista):  # ostani element w wyświetlanym pakiecie.
-            tresc += f' {licz:02d}. {lista[licz - 1]:18}'
+            tresc += f' {licz:02d}. {lista[licz - 1].nazwa[p.plec]:18}'
             licz += 1
         tresc += '\n  [N] - Następne'
         wybrany = akceptacja(tresc, str(licz - 8), str(licz - 7), str(licz - 6), str(licz - 5), str(licz - 4),
@@ -367,11 +376,13 @@ def tabela():
     cp = p.cechy_pocz
     cr = p.cechy_rozw
     ca = p.c_akt
+    pl = p.plec
+    # uwzględnić w tabelce
 
     czysc()
 
     print(f' ┌{line*92}┐')
-    print(f' │ Imię: {plc:36} Rasa: {p.rasa:21} Płeć: {p.plec:13} │')
+    print(f' │ Imię: {plc:36} Rasa: {p.rasa:21} Płeć: {p.ple:13} │')
     print(f' ├{line * 92}┤')
     print(f' │ Klasa: {p.klasa_post:14} Profesja: {p.nazwy[0]:24} Poziom: {p.nazwy[1]:25} │')
     print(f' ├{line*12}┬────┬────┬────┬────┬────┬────┬────┬─────┬────┬─────┬{line*27}┤')
@@ -719,12 +730,25 @@ elif p.rasa == rasy[4]:
     um_start = [p.atle, p.bbia, p.bzlu, p.jelf, p.odpo, p.perc, p.skrw, p.sprz, p.trop, p.wspi, p.wssp, p.zast]
     # miejsce na talenty
 
+#PŁEĆ
+k2 = randint(0,1)
+
+p.plec = k2
+
+wiad = f'Wylosowano płeć: {p.ple}.'
+wybor = akceptacja()
+if wybor == "n":
+    if p.plec == 0:
+        p.plec = 1
+    else:
+        p.plec = 0
+
 # PROFESJA
 # 1. Rzut k 100
 k100 = kosc()
 # 2. Wybór listy na podstawie rasy
 prof1 = profesje(k100, p.rasa)
-wiad = f' PROFESJA Wynik: {k100:02d} - {prof1.nazwa[0]}                {gdzie()}'  # Wiad - zmienna tekstu wyświetlana w tabeli
+wiad = f' PROFESJA Wynik: {k100:02d} - {prof1.nazwa[p.plec]}                {gdzie()}'  # Wiad - zmienna tekstu wyświetlana w tabeli
 if akceptacja() == 't':
     p.prof = prof1
     p.pd += 50  # pd za wybór pierwszego rzutu
@@ -734,15 +758,15 @@ else:  # wykonanie dodatkowych rzutów lub ręczny wybór
     prof2 = profesje(k100b, p.rasa)
     prof3 = profesje(k100c, p.rasa)
     wiad = ' PROFESJA'
-    tekst = (f' Czy któryś z tych rzutów jest satysfakcjonujący?\n  {k100:02d}. {prof1.nazwa[0]:18}'
-             f' {k100b:02d}. {prof2.nazwa[0]:18} {k100c:02d}. {prof3.nazwa[0]:18}\n  [R] - Ręczny wybór')
+    tekst = (f' Czy któryś z tych rzutów jest satysfakcjonujący?\n  {k100:02d}. {prof1.nazwa[p.plec]:18}'
+             f' {k100b:02d}. {prof2.nazwa[p.plec]:18} {k100c:02d}. {prof3.nazwa[p.plec]:18}\n  [R] - Ręczny wybór')
     reczny_wybor = akceptacja(tekst, str(k100), str(k100b), str(k100c), 'r')
     if reczny_wybor != 'r':  # wybrano jeden z rzutów
-        prof_post = profesje(int(reczny_wybor), p.rasa)
+        p.prof = profesje(int(reczny_wybor), p.rasa)
         p.pd += 25
     else:  # funkcje ręcznego wyboru
         prof_rasowe()
-        p.prof_post = grupa_prof()
+        p.prof = grupa_prof()
 
 
 # 5. /    Kolejne rzutu z innymi pd
@@ -751,7 +775,7 @@ else:  # wykonanie dodatkowych rzutów lub ręczny wybór
 # 1. Rzut 2k10 * 10 cech
 wiad = f'                                      {gdzie()}'
 cechy = ('WW', 'US', 'S', 'Wt', 'I', 'Zw', 'Zr', 'Int', 'SW', 'Ogd')
-rzuty = []    # WW, US, S, Wt, In, Zw, Zr, Int, SW, Ogd
+rzuty = []   # WW, US, S, Wt, In, Zw, Zr, Int, SW, Ogd
 
 tekst = ''
 tekst2 = ''
