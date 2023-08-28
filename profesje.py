@@ -370,7 +370,7 @@ class LowczyniNagrod:
     klasa = 'Uczeni'
 
     class Poz1:
-        nazwa_poz = ['Pogromczyni Złodziei', 'Pogromca Złodziei']
+        nazwa_poz = ['Pogromca Złodziei', 'Pogromczyni Złodziei']
 
 
 class Poslaniec:
@@ -378,7 +378,7 @@ class Poslaniec:
     klasa = 'Uczeni'
 
     class Poz1:
-        nazwa_poz = ['Goniec', 'Goniec']
+        nazwa_poz = ['Goniec', 'Gończyni']
 
 
 class StrazniczkaDrog:
@@ -484,7 +484,7 @@ class HienaCmentarna:
     klasa = 'Łotry'
 
     class Poz1:
-        nazwa_poz = ['Porywaczk Zwłok', 'Porywaczka Zwłok']
+        nazwa_poz = ['Porywacz Zwłok', 'Porywaczka Zwłok']
 
 
 class Paser:
@@ -549,7 +549,7 @@ class Kawalerzysta:
     klasa = 'Wojownicy'
 
     class Poz1:
-        nazwa_poz = ['Jeździec', ' Jeździec']
+        nazwa_poz = ['Jeździec', ' Jeźdźczyni']
 
 
 class Ochroniarz:
