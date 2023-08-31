@@ -8,11 +8,12 @@ import inspect
 import profesje as pr
 
 
-class Empty:  # tem
+class Empty:  # temp
     nazwa = nazwa_poz = ['', '']
 
 
 def gdzie():
+    """Funkcja robocza, zwracająca numer wiersza, w którym zostaje wywołana. **Przykład:** print(gdzie))"""
     # https://stackoverflow.com/questions/6810999/how-to-determine-file-function-and-line-number
     callerframerecord = inspect.stack()[1]    # 0 represents this line, # 1 represents line at caller
     frame = callerframerecord[0]
@@ -30,6 +31,7 @@ def gdzie():
 p_dodat = 0  # punkty na PP i PB
 tab_gl = True  # dla tabeli umiejętności
 rasy = ('Człowiek', 'Krasnolud', 'Niziołek', 'Wysoki elf', 'Leśny elf')
+
 # klasy
 # uczeni = ('Aptekarka', "Czarodziej", 'Inżynier', 'Kapłan', 'Medyczka', 'Mniszka', 'Prawniczka', 'Uczony')
 uczeni = (pr.Aptekarka, pr.Czarodziej, pr.Inzynier, pr.Kaplan, pr.Medyczka, pr.Mniszka, pr.Prawniczka, pr.Uczony)
@@ -45,7 +47,7 @@ lotry = (pr.Banita, pr.Czarownica, pr.HienaCmentarna, pr.Paser, pr.Rajfur, pr.Re
 wojownicy = (pr.Gladiator, pr.KaplanBitewny, pr.Kawalerzysta, pr.Ochroniarz, pr.Oprych, pr.Rycerz, pr.Zabojca,
              pr.Zolnierz)
 klasa = (uczeni, mieszczanie, dworzanie, pospolstwo, wedrowcy, wodniacy, lotry, wojownicy)
-# prof_post = ''
+
 lista = []  # używane do ręcznego wyboru profesji
 
 # Rasowe modyfikatory cech
@@ -57,6 +59,7 @@ mod_r_elf = (30, 30, 20, 20, 40, 30, 30, 30, 30, 20)
 
 
 class Postac:
+    """Klasa w której zapisane są wartości Atrybutów i umiejętności postaci."""
     plec = 2
     rasa = ''
     prof = None
@@ -75,6 +78,7 @@ class Postac:
     # Lista um podstawowych w tabeli z którą porównuje w trakcie generowania?
     # w tabeli sprawdza czy wykupiona lub podstawowa i dopisuje?
     # zmienna = [nazwa, cecha, rozwinięcia]
+    # um. grupowa = [ilość użyć, nazwa, [umiejętność, wybrana z grupy]]
     atle = ['Atletyka', 'Zw', 0]  # Podstawowa
     bada = ['Badania Naukowe', 'Int', 0]
 
@@ -138,6 +142,8 @@ class Postac:
     muob = ['Muzyka (Obój)', 'Zr', 0]  # Obój
     musk = ['Muzyka (Skrzypce)', 'Zr', 0]  # Skrzypce
     mufl = ['Muzyka (Flet)', 'Zr', 0]  # Flet
+    muzy = [0, 'Muzyka (Dowolny instrument)', [mdud, False], [muhr, False], [mulu, False], [muob, False], [musk, False],
+            [mufl, False]]
 
     nawi = ['Nawigacja', 'I', 0]  # Podstawowa
     odpo = ['Odporność', 'Wt', 0]  # Podstawowa
@@ -161,6 +167,8 @@ class Postac:
     rgar = ['Rzemiosło (Garncarstwo)', 'Zr', 0]  # Garncarstwo
     rkam = ['Rzemiosło (Kamieniarstwo)', 'Zr', 0]  # Kamieniarstwo
     rtru = ['Rzemiosło (Truciciel)', 'Zr', 0]  # Truciciel
+    rzem = [0, 'Rzemiosło (Dowolne)', [rapt, False], [rbal, False], [rgrb, False], [rgot, False], [rkal, False],
+            [rkow, False], [rswi, False], [rgar, False], [rkam, False], [rtru, False]]
 
     scch = ['Sekretne Znaki (Cechu)', 'Int', 0]  # Cechu
     skoc = ['Sekretne Znaki (Kol. Cienia)', 'Int', 0]  # Kolegium Cienia
@@ -172,6 +180,7 @@ class Postac:
     skrp = ['Skradanie (Podziemia)', 'Zw', 0]  # Podstawowa Podziemia
     skrm = ['Skradanie (Miasto)', 'Zw', 0]  # Podstawowa Miasto
     skrw = ['Skradanie (Wieś)', 'Zw', 0]  # Podstawowa Wieś
+    skrd = [0, 'Skradanie (Dowolne)', [skrp, False], [skrm, False], [skrw, False]]
 
     splm = ['Splatanie Magii (Aqshy)', 'SW', 0]  # Ogólne
     smaq = ['Splatanie Magii (Aqshy)', 'SW', 0]  # (Aqshy)
@@ -224,6 +233,7 @@ class Postac:
 
     @property
     def ple(self):
+        """Funkcja zwracająca tekst nazywający płeć postaci."""
         if self.plec == 0:
             rodzaj = "Mężczyzna"
         elif self.plec == 1:
@@ -234,6 +244,7 @@ class Postac:
 
     @property
     def zyw(self):
+        """Funkcja zwracająca wartość żywotności postaci."""
         if self.rasa == rasy[2]:
             bs = 0
         else:
@@ -244,6 +255,8 @@ class Postac:
 
     @property
     def c_akt(self):  # WW, US, S, Wt, In, Zw, Zr, Int, SW, Ogd
+        """Funkcja zwracająca aktualne wartości cech postaci. Początkowa + rozwinięcie
+        :return: (WW, US, S, Wt, In, Zw, Zr, Int, SW, Ogd)"""
         ww = self.cechy_pocz[0] + self.cechy_rozw[0]
         us = self.cechy_pocz[1] + self.cechy_rozw[1]
         s = self.cechy_pocz[2] + self.cechy_rozw[2]
@@ -257,6 +270,9 @@ class Postac:
         return ww, us, s, wt, ini, zw, zr, inte, sw, ogd
 
     def umiej(self, um):  # Końcowe wartości umiejętności
+        """Funkcja zwracająca bazową i aktualną wartość zadanej umiejętności postaci.
+        :param um: Zmienna umiejętności postaci z klasy Postac()
+        :return: (Cecha powiązana, Cecha + rozwinięcie)"""
         cecha = -100  # wskarze błedny zapis cechy
         if um[1] == 'WW':
             cecha = self.c_akt[0]
@@ -284,8 +300,9 @@ class Postac:
 
     @property
     def nazwy(self):
-        '''Nazwy wywodzące się z klasy postaci. -> nazwy[nazwa_profesji, nazwa_poziomu_postaci]'''
-        if self.plec == 0:  # True to facet
+        """Nazwy profesji postaci oraz jej aktualnego poziomu
+        :return: nazwa profesji, nazwa poziomu profesji"""
+        if self.plec == 0:  # zamienieć na: f = self.plec
             f = 0  # zmienna do pozycji listy nazwy
         else:
             f = 1  # zmienna do pozycji listy nazwy
@@ -294,17 +311,55 @@ class Postac:
         else:
             return self.prof.nazwa[f], self.prof.Poz1.nazwa_poz[f]
 
+    def grupy(self, um):
+        """Sprawdza czy użytkownik może wybrać konkretną umiejętność w umiejętności grupowej.
+        :param um: lista z zadanej umiejętności grupowej składająca się z elementów:
+            [ **liczba dozwolonych umiejętności** (*int*), **nazwa umiejętności grupowej** (np. *Rzemiosło (Dowolne)*),
+            umiejętość 1, umiejętość 2, **umiejętość n**].
+             Każda umiejętność jest listą 2 elementową: właściwa umiejętność
+            (*nazwa, cecha, rozwinięcia*), wartość logiczna. **Prawda** - wybrano jako umiejętność grupową,
+            **Fałsz** – nie wybrano jako umiejętność grupową.
+        """
+        l_um = []  # lista do wyboru nowej umiejętności,
+        um_t = []  # lista wyboru ustalonych umiejętności
+        licznik = 0
+        dop_um = um[0]
+        for x in um:  # porównanie liczby wybranych i dostępnych umiejętności
+            if type(x) is list and x[1]:  # odczyt ile umiej. w grupie jest wybranych
+                licznik += 1
+        while dop_um > licznik:  # jeśli można wybrać nową umiejętność
+            for x in um:
+                if type(x) is list and not x[1]:  # pobiera umiejętności z fałszem i dodaje do listy
+                    l_um.append(x[0])
+            gr = um_z_grupy(l_um)  # wybór umiejętności
+            for x in um:
+                if type(x) is list and x[0] == gr:
+                    x[1] = True  # Zmienia wartość logiczną na true
+                    licznik += 1
+
+        for x in um:
+            if type(x) is list and x[1]:
+                um_t.append(x[0])  # dodaje umiejętność do listy już wybranych
+        if len(um_t) == 1:
+            return um_t[0]
+        else:
+            return um_z_grupy(um_t)
+
 
 #################################
 #           Narzędzia           #
 #################################
 
 def czysc():  # oczyść ekran
+    """Usuwa wszystkie wyświetlane elementy w okcnie terminala."""
     os.system('cls' if os.name == 'nt' else 'clear')
     print('')
 
 
-def kosc(k=100):  # rzut kością
+def kosc(k=100):
+    """ Rzut kością.
+    :param k: Góna wartość zakresu losowania, domyśłnie 100.
+    :return: Losowa wartość z zakresu od 1 do k."""
     rzut = randint(1, k)
     return rzut
 
@@ -317,9 +372,18 @@ def ktora_tab():
 
 
 def akceptacja(pytanie=' Akceptujesz wynik rzutu? (T/N)', *args):
-    if len(args) == 1:
+    """funkcja zwracająca wybór dokonywany przez użytkownika.
+    :param pytanie: Treść komunikatu dla użytkownika. **Domyślnie:** *Akceptujesz wynik rzutu? (T/N)*
+    :arg args: Znaki, które może zwrócić funkcja. **Domyślnie:** *T* oraz *N*.
+    Dopuszczalne jest podanie zmiennej listy.
+    **Przykład:** znaki = (t, n, y, f, 1, 2)
+    akceptacja('Treść pytania', znaki)
+    :return: Zwraca wpisany znak jako *str*
+
+    """
+    if len(args) == 1:  # argumenty wysłane jako krotka/lista
         args = str(args[0])
-    if len(args) == 0:
+    if len(args) == 0:  # brak argumentów, do domyślne tak/nie
         args = list(args)
         args.append('t')
         args.append('n')
@@ -336,6 +400,7 @@ def akceptacja(pytanie=' Akceptujesz wynik rzutu? (T/N)', *args):
 
 
 def prof_rasowe():  # tworzy listę profesji dostęną dla rasy
+    """Tworzy listę profesji dostępnych dla rasy w klasie *Postac*, w oparciu o funkcję *profesje()*."""
     for a in range(1, 101):
         prof = profesje(a, p.rasa)
         lista.append(prof)
@@ -376,8 +441,8 @@ def tabela():
     cp = p.cechy_pocz
     cr = p.cechy_rozw
     ca = p.c_akt
-    pl = p.plec
-    # uwzględnić w tabelce
+    # pl = p.plec
+    # uwzględnić w tabelce?
 
     czysc()
 
@@ -385,7 +450,7 @@ def tabela():
     print(f' │ Imię: {plc:36} Rasa: {p.rasa:21} Płeć: {p.ple:13} │')
     print(f' ├{line * 92}┤')
     print(f' │ Klasa: {p.klasa_post:14} Profesja: {p.nazwy[0]:24} Poziom: {p.nazwy[1]:25} │')
-    print(f' ├{line*12}┬────┬────┬────┬────┬────┬────┬────┬─────┬────┬─────┬{line*27}┤')
+    print(f' ├{line * 12}┬────┬────┬────┬────┬────┬────┬────┬─────┬────┬─────┬{line * 27}┤')
     print(f' │   Cechy    │ WW │ US │  S │ Wt │  I │ Zw │ Zr │ Int │ SW │ Ogd │       Doświadczenie       │')
     print(f' ├────────────┼────┼────┼────┼────┼────┼────┼────┼─────┼────┼─────┼──────────┬────────┬───────┤')
     print(f' │ Początkowa │ {cp[0]:02} │ {cp[1]:02d} │ {cp[2]:02d} │ {cp[3]:02d} │ {cp[4]:02d} │ {cp[5]:02d} │'
@@ -399,7 +464,7 @@ def tabela():
           f' {ca[6]:02d} │  {ca[7]:02d} │ {ca[8]:02d} │  {ca[9]:02d} │ Żywotność │  {p.zyw:2}   │  {plc:4} │')
     print(f' ├────────────┴─┬──┴────┴────┴─┬──┴────┼────┴────┴────┬┴────┴────┬┴───┬──────┬┴───┬───┴──┬────┤')
     print(f' │ Pt. Boh.: {p.pb:2d} │ Pt. Det.: {p.pb:2d} │ PP: {p.pp:1} │ Pt. Szcz.: {p.pp:1} │ Szybkość │ {p.szyb:2}'
-          f' │ Chód │ {p.szyb*2:2d} │ Bieg │ {p.szyb*4:2d} │')
+          f' │ Chód │ {p.szyb * 2:2d} │ Bieg │ {p.szyb * 4:2d} │')
     print(f' └──────────────┴──────────────┴───────┴──────────────┴──────────┴────┴──────┴────┴──────┴────┘')
     print(f' {wiad}')
 
@@ -442,18 +507,18 @@ def tab_um():
     else:
         pk = dl
     # Pętla drukuje wewnętrzne wiersze
-    for l in range(0, dl):
-        tab += f' │ {um_tab[l][0]:27} │ {um_tab[l][1]:^3} │ {um(um_tab[l])[0]:^2} │ {um_tab[l][2]:^4} │' \
-               f' {um(um_tab[l])[1]:^4} ││ {um_tab[l+pk][0]:27} │ {um_tab[l+pk][1]:^3} │ {um(um_tab[l+pk])[0]:^2} │' \
-               f' {um_tab[l+pk][2]:^4} │ {um(um_tab[l+pk])[1]:^4} │\n'
-        if l < dl - 1:
+    for x in range(0, dl):
+        tab += f' │ {um_tab[x][0]:27} │ {um_tab[x][1]:^3} │ {um(um_tab[x])[0]:^2} │ {um_tab[x][2]:^4} │' \
+               f' {um(um_tab[x])[1]:^4} ││ {um_tab[x + pk][0]:27} │ {um_tab[x + pk][1]:^3} │' \
+               f' {um(um_tab[x + pk])[0]:^2} │ {um_tab[x + pk][2]:^4} │ {um(um_tab[x + pk])[1]:^4} │\n'
+        if x < dl - 1:
             tab += sep
     # Ostatni wiersz
     if len(um_tab) % 2 != 0:
         # Jeśli jest nieparzysta liczba elementów w ostatnim wierszu będzie pusta 'komórka'.
         tab += sep
-        tab += f' │ {um_tab[l+1][0]:27} │ {um_tab[l+1][1]:^3} │ {um(um_tab[l+1])[0]:^2} │ {um_tab[l+1][2]:^4} │' \
-               f' {um(um_tab[l+1])[1]:^4} ││ {plc:27} │ {plc:^3} │ {plc:^2} │ {plc:^4} │ {plc:^4} │\n'
+        tab += f' │ {um_tab[x + 1][0]:27} │ {um_tab[x + 1][1]:^3} │ {um(um_tab[x + 1])[0]:^2} │ {um_tab[x + 1][2]:^4}' \
+               f' │ {um(um_tab[x + 1])[1]:^4} ││ {plc:27} │ {plc:^3} │ {plc:^2} │ {plc:^4} │ {plc:^4} │\n'
     tab += f' └{line * 29}┴─────┴────┴──────┴──────┴┴{line * 29}┴─────┴────┴──────┴──────┘'
 
     czysc()
@@ -467,15 +532,15 @@ def los_rasy(rzut):  # Przydział razy postaci
     rasa_postaci = None
     if rzut > 90:
         if 91 <= rzut <= 94:
-            rasa_postaci = rasy[2]
+            rasa_postaci = rasy[2]  # Niziołek
         elif 95 <= rzut <= 98:
-            rasa_postaci = rasy[1]
+            rasa_postaci = rasy[1]  # Krasnolud
         elif rzut == 99:
-            rasa_postaci = rasy[3]
+            rasa_postaci = rasy[3]  # Wysoki elf
         elif rzut == 100:
-            rasa_postaci = rasy[4]
+            rasa_postaci = rasy[4]  # Leśny elf
     else:
-        rasa_postaci = rasy[0]
+        rasa_postaci = rasy[0]  # człowiek
     return rasa_postaci
 
 
@@ -502,7 +567,7 @@ def profesje(rzut, r_post):  # zakres profesji zależnie od rasy postaci
         profesja = klasa[1][0]
     elif (rzut == 16 and r_post == rasy[0]) or (rzut <= 15 and r_post == rasy[1]) or (rzut <= 14 and r_post == rasy[2]):
         profesja = klasa[1][1]
-    elif(rzut <= 19 and r_post == rasy[0]) or (rzut <= 21 and r_post == rasy[1]) or (rzut <= 17 and r_post == rasy[2]):
+    elif (rzut <= 19 and r_post == rasy[0]) or (rzut <= 21 and r_post == rasy[1]) or (rzut <= 17 and r_post == rasy[2]):
         profesja = klasa[1][2]
     elif (rzut <= 21 and r_post == rasy[0]) or (rzut <= 27 and r_post == rasy[1]) or (rzut <= 22 and r_post == rasy[2]):
         profesja = klasa[1][3]
@@ -622,46 +687,85 @@ def profesje(rzut, r_post):  # zakres profesji zależnie od rasy postaci
     return profesja
 
 
-def rozw_um_start():  # przydział rozwinięć Umiejętności na start
+def rozw_um(um):  # przydział rozwinięć Umiejętności na start
     um_wybier = 1  # odliczanie umiejętności do rozwinięcia (2 razy po 3)
     rozw = 5  # wartość rozwinięcia w cyklu
-    """ Połączyć z grupa_prof() - funkcją do wyboru profesji. Zewnętrzna część może być dekoratorem.
-     Można stworzyć zmienne podmieniające profesje i umiejętności między sobę. 
-     If może być użytu do wyboru wariantu z listą odpowiedzi dla akceptacji, czyba że akceptacja() radzi sobie z krotką
-     """  # temp
     while True:
-        if um_wybier == 4:
+        if um_wybier == 4:  # przełącza na kolejną grupę punktów umiejętności
             um_wybier = 1
             rozw = 3
         licz = 1
-        while licz <= len(um_start):
+        while licz <= len(um):
             tresc = f' Wybierz umiejętność ({um_wybier}/3), którą rozwiniesz o {rozw}:\n'
             while (licz % 6) != 0:  # stała określająca liczbę umiejętności w pakiecie
-                if licz > len(um_start):  # jeśli nie ma więcej elementów w liście
+                if licz > len(um):  # jeśli nie ma więcej elementów w liście
                     tresc += '\n '
                     break
-                tresc += f'  {licz:<2d}. {um_start[licz - 1][0]:29}'
+                if type(um[licz - 1][0]) is str:  # sprawdza czy to wybór z grupy
+                    tresc += f'  {licz:<2d}. {um[licz - 1][0]:29}'  # pojedynczy element
+                else:
+                    tresc += f'  {licz:<2d}. {um[licz - 1][1]:29}'  # podgrupa elementów
                 if (licz % 3) == 0:  # stała określająca liczbę umiejętności w rzędzie pakietu
                     tresc += '\n'
                 licz += 1
-            if (licz % 6) == 0 and licz <= len(um_start):  # ostani element w wyświetlanym pakiecie.
-                tresc += f'  {licz:<2d}. {um_start[licz - 1][0]:29}\n  '
+            if (licz % 6) == 0 and licz <= len(um):  # ostani element w wyświetlanym pakiecie.
+                if type(um[licz - 1][0]) is str:
+                    tresc += f'  {licz:<2d}. {um[licz - 1][0]:29}'  # pojedyncza umiejętność
+                else:
+                    tresc += f'  {licz:<2d}. {um[licz - 1][1]:29}'  # grupa umiejętności
                 licz += 1
-            if len(um_start) > 6:
-                tresc += '[N] - Następne'
+            if len(um) > 6:
+                tresc += '\n  [N] - Następne'
             wybrany = akceptacja(tresc, str(licz - 6), str(licz - 5), str(licz - 4), str(licz - 3), str(licz - 2),
                                  str(licz - 1), 'n')
             if wybrany == 'n':  # nastęna grupa umiejętności
-                if licz >= len(um_start):  # zapętla na końcu listy
+                if licz >= len(um):  # zapętla na końcu listy
                     licz = 1
                 continue
-            else:
-                um_start[int(wybrany) - 1][2] += rozw  # dodaje rozwinięcie do umiejętności
-                del um_start[int(wybrany) - 1]  # usuwa wybrany z listy
+            elif type(um[int(wybrany) - 1][0]) is int:  # dla umiejętności grupowej.
+                szczeg = p.grupy(um[int(wybrany) - 1])  # temp # zmienić wartość rzemiosła
+                szczeg[2] += rozw
+                del um[int(wybrany) - 1]  # usuwa wybrany z listy
                 um_wybier += 1
                 break
+            else:  # dla zwykłej umiejętności
+                um[int(wybrany) - 1][2] += rozw  # dodaje rozwinięcie do umiejętności
+                del um[int(wybrany) - 1]  # usuwa wybrany z listy
+                um_wybier += 1
+                break  # ujednolicić z elifem, wyciągnąć na wieszch
+
         if um_wybier == 4 and rozw == 3:
             break
+
+
+def um_z_grupy(l_um):  # pozwala na wybór umiejętnośći grupowej
+    """*Funkcja docelowo do połączenia z innymi opartymi na tym samym schemacie.*
+    Funkcja wyświetla umiejętności z grupy, pozwalając na wybór konkretnej umiejętności.
+    :arg l_um: lista umiejętności
+    """
+    licz = 1
+    while licz <= len(l_um):
+        tresc = ' Wybierz umiejętność: \n '
+        while (licz % 6) != 0:  # liczba umiejętności w pakiecie
+            if licz > len(l_um):  # jeśli nie ma więcej elementów w liście
+                tresc += '\n '
+                break
+            tresc += f' {licz:02d}. {l_um[licz - 1][0]:29}'
+            if (licz % 3) == 0:  # liczba umiejętności w rzędzie pakietu
+                tresc += '\n '
+            licz += 1
+        if (licz % 6) == 0 and licz <= len(l_um):  # ostani element w wyświetlanym pakiecie.
+            tresc += f' {licz:02d}. {l_um[licz - 1][0]:29}'
+            licz += 1
+        tresc += '\n  [N] - Następne'
+        wyb = akceptacja(tresc, str(licz - 6), str(licz - 5), str(licz - 4),
+                         str(licz - 3), str(licz - 2), str(licz - 1), 'n')
+        if wyb == 'n':  # nastęna grupa
+            if licz >= len(l_um):  # zapętla na końcu listy
+                licz = 1
+            continue
+        else:
+            return l_um[int(wyb) - 1]
 
 
 #####################################
@@ -705,23 +809,24 @@ elif p.rasa == rasy[1]:
     p.pb = 2
     p.szyb = 3
     p_dodat = 2
-    um_start = [p.bbia, p.jkrs, p.odpo, p.opan, p.mglo, p.rapt, p.rbal, p.rgrb, p.rgot, p.rkal, p.rkow, p.rswi, p.rgar,
-                p.rkam, p.wgeo, p.wkrs, p.wmet, p.wycn, p.wsga, p.zast]
+    um_start = [p.bbia, p.jkrs, p.odpo, p.opan, p.mglo, p.rzem, p.wgeo, p.wkrs, p.wmet, p.wycn, p.wsga, p.zast]
+    p.rzem[0] = 1  # tymczasowo do wyboru umiejętności rasowych
     # miejsce na talenty
 elif p.rasa == rasy[2]:
     mod_rasowy = mod_r_niz
     p.pb = 2
     p.szyb = 3
     p_dodat = 3
-    um_start = [p.char, p.haza, p.intu, p.jniz, p.mglo, p.perc, p.rgot, p.skrp, p.skrm, p.skrw, p.targ, p.unik, p.wimp,
+    um_start = [p.char, p.haza, p.intu, p.jniz, p.mglo, p.perc, p.rgot, p.skrd, p.targ, p.unik, p.wimp,
                 p.zwpa]
+    p.skrd[0] = 1  # tymczasowo do wyboru umiejętności rasowych
     # miejsce na talenty
 elif p.rasa == rasy[3]:
     mod_rasowy = mod_r_elf  # Wysoki
     p.szyb = 5
     p_dodat = 2
-    um_start = [p.bbia, p.bzlu, p.dowo, p.jelf, p.mufl, p.muhr, p.mulu, p.muob, p.musk, p.nawi, p.opan, p.plyw, p.perc,
-                p.wycn, p.wssp, p.zegl]
+    um_start = [p.bbia, p.bzlu, p.dowo, p.jelf, p.muzy, p.nawi, p.opan, p.plyw, p.perc, p.wycn, p.wssp, p.zegl]
+    p.muzy[0] = 1  # tymczasowo do wyboru umiejętności rasowych
     # miejsce na talenty
 elif p.rasa == rasy[4]:
     mod_rasowy = mod_r_elf  # Leśny
@@ -730,12 +835,12 @@ elif p.rasa == rasy[4]:
     um_start = [p.atle, p.bbia, p.bzlu, p.jelf, p.odpo, p.perc, p.skrw, p.sprz, p.trop, p.wspi, p.wssp, p.zast]
     # miejsce na talenty
 
-#PŁEĆ
-k2 = randint(0,1)
+# PŁEĆ
+k2 = randint(0, 1)
 
 p.plec = k2
 
-wiad = f'Wylosowano płeć: {p.ple}.'
+wiad = f' Wylosowano płeć: {p.ple}.'
 wybor = akceptacja()
 if wybor == "n":
     if p.plec == 0:
@@ -748,7 +853,7 @@ if wybor == "n":
 k100 = kosc()
 # 2. Wybór listy na podstawie rasy
 prof1 = profesje(k100, p.rasa)
-wiad = f' PROFESJA Wynik: {k100:02d} - {prof1.nazwa[p.plec]}                {gdzie()}'  # Wiad - zmienna tekstu wyświetlana w tabeli
+wiad = f' PROFESJA Wynik: {k100:02d} - {prof1.nazwa[p.plec]}'  # Wiad - tekst wyświetlana w tabeli
 if akceptacja() == 't':
     p.prof = prof1
     p.pd += 50  # pd za wybór pierwszego rzutu
@@ -873,7 +978,13 @@ p.pb += p_dodat - int(wybor)
 """Uwaga: jeśli przy Talencie lub Umiejętności widnieje oznaczenie „(Dowolne)”,oznacza to, że możesz wybrać
  jedną z opcji danego Talentu lub danej Umiejętności na tym poziomie Profesji. Zatem Wiedza (Dowolna) to może być
 Wiedza (Geografa), Wiedza (Wiedza Ludowa), Wiedza (Magia) albo dowolny inny, podobnyprzykład. """
-rozw_um_start()
+wiad = ''  # temp # czyści tekst pod tabelą
+rozw_um(um_start)
+for g in p.muzy, p.skrd, p.rzem:    # zerowanie po wyborze umiejętności z rasy
+    g[0] = 0
+    for p in g:
+        if type(p) is list and p[1]:
+            p[1] = False
 
 # Talenty (też z rasy)
 
