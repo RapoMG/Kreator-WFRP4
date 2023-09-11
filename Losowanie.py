@@ -982,9 +982,9 @@ wiad = ''  # temp # czyści tekst pod tabelą
 rozw_um(um_start)
 for g in p.muzy, p.skrd, p.rzem:    # zerowanie po wyborze umiejętności z rasy
     g[0] = 0
-    for p in g:
-        if type(p) is list and p[1]:
-            p[1] = False
+    for o in g:
+        if type(o) is list and o[1]:
+            o[1] = False
 
 # Talenty (też z rasy)
 
